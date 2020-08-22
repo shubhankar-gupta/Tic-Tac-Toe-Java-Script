@@ -130,7 +130,7 @@ function isLeftDiagonalMatched()
     firstBoardELement = board[0][0];
     nextPlayer = findNextPlayer(firstBoardELement);
     for(let i = 0; i < size; i++) {
-        leftDiagonal += arrayLeftDiagonal(board,i);
+        leftDiagonal += arrayLeftDiagonal(board, i);
     }
     if(leftDiagonal.indexOf("-") === -1 && leftDiagonal.indexOf(nextPlayer) === -1) {
         return true;
@@ -145,7 +145,7 @@ function isRightDiagonalMatched()
     firstBoardELement = board[0][size-1];
     nextPlayer = findNextPlayer(firstBoardELement);
     for(let i = 0; i < size; i++) {
-            rightDiagonal += arrayRightDiagonal(board,i);
+            rightDiagonal += arrayRightDiagonal(board, i);
     }
     if(rightDiagonal.indexOf("-") === -1 && rightDiagonal.indexOf(nextPlayer) === -1) {
         return true;
@@ -163,7 +163,6 @@ function gameIsWon()
         isRightDiagonalMatched() === true) {
         return true;
     }
-
     return false;
 }
 
