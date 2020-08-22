@@ -1,5 +1,5 @@
-let size = prompt("Size of Tic-Tac-Toe Board",3);
-let board = new Array(size);
+const size = prompt("Size of Tic-Tac-Toe Board", 3);
+const board = new Array(size);
 let moves = size*size;
 
 function createBoard()
@@ -29,40 +29,41 @@ function showBoard()
     }
 }
 
+function isInvalidPosition(position)
+{
+    if(board[parseInt(position[0])][parseInt(position[1])] === "-") {
+        return false;
+    }
+    return true;
+}
+
 function playGame()
 {
     let currentPlayer = "X";
     let flagInvalidPosition = 0;
-    while(gameIsWon() == 0 || moves != 0) {
-        flagInvalidPosition = 0;
-        let position=prompt("Enter the row and index of : " + currentPlayer);
+    while(gameIsWon() === false || moves !== 0) {
+        let position = prompt("Enter the row and index of : " + currentPlayer);
 
-        if(board[parseInt(position[0])][parseInt(position[1])] == "-") {
+        if(isInvalidPosition(position) === false) {
             board[parseInt(position[0])][parseInt(position[1])] = currentPlayer;
+            moves--;
         } else {
             console.log("Board Position is occupied");
-            flagInvalidPosition = 1;
             moves++;
+            currentPlayer=findNextPlayer(currentPlayer);
         }
 
         showBoard();
-        console.log();
+        console.log(`
+         `);
 
-        if(gameIsWon() == 1) {
+        if(gameIsWon() === true) {
             console.log("Game is Won by Player " + currentPlayer + " !");
             break;
         }
+        currentPlayer=findNextPlayer(currentPlayer);
 
-        if(flagInvalidPosition == 0) {
-            moves--;
-            if(currentPlayer == "X") {
-                currentPlayer = "O";
-            } else {
-                currentPlayer = "X";
-            }
-        }
-
-        if(boardIsFull() && gameIsWon() == 0) {
+        if(boardIsFull() && gameIsWon() === false) {
             console.log("Game Drawn!");
             break;
         }
@@ -74,12 +75,88 @@ function boardIsFull()
 {
     for(let i = 0; i < size; i++) {
         for(let j = 0; j < size; j++) {
-            if(board[i][j] == "-") {
-                return 0;
+            if(board[i][j] === "-") {
+                return false;
             }
         }
     }
-    return 1;
+    return true;
+}
+
+function findNextPlayer(currentlyPlaying)
+{
+    if(currentlyPlaying === "X"){ 
+        return "O";
+    } 
+    return "X";
+}
+
+function isRowMatched()
+{
+    let row;
+    for(let i = 0; i < size; i++) {
+        row = "";
+        firstBoardELement = board[i][0];
+        nextPlayer = findNextPlayer(firstBoardELement);
+        
+        for(let j = 0;j < size; j++) {    
+            row += board[i][j];    
+        }
+        if(row.indexOf("-") === -1 && row.indexOf(nextPlayer) === -1) {
+            return true;
+        }
+    } 
+    return false;
+}
+
+function isColumnMatched()
+{
+    let row;
+    for(let j = 0; j < size; j++) {
+        firstBoardELement = board[0][j];
+        row = "";
+        nextPlayer = findNextPlayer(firstBoardELement);
+        
+        for(let i = 0; i < size; i++) {
+            row += board[i][j];
+        }
+        if(row.indexOf("-") === -1 && row.indexOf(nextPlayer) === -1) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function isLeftDiagonalMatched()
+{
+    let leftDiagonal = "";
+    firstBoardELement = board[0][0];
+    nextPlayer = findNextPlayer(firstBoardELement);
+    for(let i = 0; i < size; i++) {
+        leftDiagonal += board[i][i];
+    }
+    if(leftDiagonal.indexOf("-") === -1 && leftDiagonal.indexOf(nextPlayer) === -1) {
+        return true;
+    }
+    return false;
+}
+
+function isRightDiagonalMatched()
+{
+    let rightDiagonal = "";
+    firstBoardELement = board[0][size-1];
+    nextPlayer = findNextPlayer(firstBoardELement);
+    for(let i = 0; i < size; i++) {
+        for(let j = 0; j < size; j++) {
+            if( (i+j) === (size-1)) {
+                rightDiagonal += board[i][j];
+            }
+        }
+    }
+    if(rightDiagonal.indexOf("-") === -1 && rightDiagonal.indexOf(nextPlayer) === -1) {
+        return true;
+    }
+    return false;
 }
 
 
@@ -88,82 +165,13 @@ function gameIsWon()
     let firstBoardELement;
     let nextPlayer;
     let row;
-    let leftDiagonal = "";
-    let rightDiagonal = "";
-    //checking for every row
-    for(let i = 0; i < size; i++)
-    {
-        firstBoardELement = board[i][0];
-        if(firstBoardELement == "X"){ 
-            nextPlayer = "O";
-        } else {
-            nextPlayer = "X";
-        }
-        row = "";
-        for(let j = 0;j < size; j++) {    
-            row += board[i][j];    
-        }
-        if(row.indexOf("-") == -1 && row.indexOf(nextPlayer) == -1) {
-            return 1;
-        }
-    } 
-
-    //checking for every column
-    for(let j = 0; j < size; j++) {
-        firstBoardELement = board[0][j];
-        if(firstBoardELement == "X") {
-            nextPlayer = "O";
-        }
-        else {
-            nextPlayer = "X";
-        }
-        row = "";
-        for(let i = 0; i < size; i++) {
-            row += board[i][j];
-        }
-        if(row.indexOf("-") == -1 && row.indexOf(nextPlayer) == -1) {
-            return 1;
-        }
-    }
-
-    //checking for left diagonal
     
-    firstBoardELement = board[0][0];
-    if(firstBoardELement == "X") {
-        nextPlayer = "O";
-    } else {
-        nextPlayer = "X";
+    if(isRowMatched() === true || isColumnMatched() === true || isLeftDiagonalMatched() === true || 
+        isRightDiagonalMatched() === true) {
+        return true;
     }
 
-    for(let i = 0; i < size; i++) {   
-        for(let j = 0; j < size; j++) {
-            if(i == j) {
-                leftDiagonal += board[i][j];
-            }
-        }
-    }
-    if(leftDiagonal.indexOf("-") == -1 && leftDiagonal.indexOf(nextPlayer) == -1) {
-        return 1;
-    }
-
-    //checking for right diagonal
-    firstBoardELement = board[0][size-1];
-    if(firstBoardELement == "X") {
-        nextPlayer = "O";
-    } else {
-        nextPlayer = "X";
-    }
-    for(let i = 0; i < size; i++) {
-        for(let j = 0; j < size; j++) {
-            if( (i+j) == (size-1)) {
-                rightDiagonal += board[i][j];
-            }
-        }
-    }
-    if(rightDiagonal.indexOf("-") == -1 && rightDiagonal.indexOf(nextPlayer) == -1) {
-        return 1;
-    }
-    return 0;
+    return false;
 }
 
 createBoard();
