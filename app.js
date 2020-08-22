@@ -147,11 +147,7 @@ function isRightDiagonalMatched()
     firstBoardELement = board[0][size-1];
     nextPlayer = findNextPlayer(firstBoardELement);
     for(let i = 0; i < size; i++) {
-        for(let j = 0; j < size; j++) {
-            if( (i+j) === (size-1)) {
-                rightDiagonal += board[i][j];
-            }
-        }
+            rightDiagonal += board[i][size-1-i];
     }
     if(rightDiagonal.indexOf("-") === -1 && rightDiagonal.indexOf(nextPlayer) === -1) {
         return true;
