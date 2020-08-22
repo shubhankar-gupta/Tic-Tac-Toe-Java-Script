@@ -44,12 +44,17 @@ function playGame()
     while(gameIsWon() === false || moves !== 0) {
         let position = prompt("Enter the row and index of : " + currentPlayer);
 
-        if(isInvalidPosition(position) === false) {
-            board[parseInt(position[0])][parseInt(position[1])] = currentPlayer;
-            moves--;
-        } else {
-            console.log("Board Position is occupied");
-            moves++;
+        try {
+            if(isInvalidPosition(position) === false) {
+                board[parseInt(position[0])][parseInt(position[1])] = currentPlayer;
+                moves--;
+            } else {
+                console.log("Board Position is occupied");
+                moves++;
+                currentPlayer = findNextPlayer(currentPlayer);
+            }
+        } catch(err) {
+            console.log("Enter position within limits");
             currentPlayer = findNextPlayer(currentPlayer);
         }
 
@@ -73,9 +78,9 @@ function playGame()
 
 function boardIsFull()
 {
-    for(let i = 0; i < size; i++) {
-        for(let j = 0; j < size; j++) {
-            if(board[i][j] === "-") {
+    for(let boardRow of board) {
+        for(let boardElement of boardRow) {
+            if(boardElement === "-") {
                 return false;
             }
         }
@@ -93,34 +98,25 @@ function findNextPlayer(currentlyPlaying)
 
 function isRowMatched()
 {
-    let row;
-    for(let i = 0; i < size; i++) {
-        row = "";
-        firstBoardELement = board[i][0];
+    for(let boardRow of board) {
+        firstBoardELement = boardRow[0];
         nextPlayer = findNextPlayer(firstBoardELement);
-        
-        for(let j = 0;j < size; j++) {    
-            row += board[i][j];    
-        }
-        if(row.indexOf("-") === -1 && row.indexOf(nextPlayer) === -1) {
+        if(boardRow.toString().indexOf("-") === -1 && boardRow.toString().indexOf(nextPlayer) === -1) {
             return true;
         }
-    } 
+    }
     return false;
 }
 
 function isColumnMatched()
 {
-    let row;
-    for(let j = 0; j < size; j++) {
-        firstBoardELement = board[0][j];
-        row = "";
+    let column;
+    const arrayColumn = (matrix, index) => matrix.map(x => x[index]);
+    for(let i = 0; i < size; i++) {
+        firstBoardELement = board[0][i];
         nextPlayer = findNextPlayer(firstBoardELement);
-        
-        for(let i = 0; i < size; i++) {
-            row += board[i][j];
-        }
-        if(row.indexOf("-") === -1 && row.indexOf(nextPlayer) === -1) {
+        column = arrayColumn(board, i);
+        if(column.toString().indexOf("-") === -1 && column.toString().indexOf(nextPlayer) === -1) {
             return true;
         }
     }
@@ -130,10 +126,11 @@ function isColumnMatched()
 function isLeftDiagonalMatched()
 {
     let leftDiagonal = "";
+    const arrayLeftDiagonal = (matrix, rowIndex) => matrix[rowIndex][rowIndex];
     firstBoardELement = board[0][0];
     nextPlayer = findNextPlayer(firstBoardELement);
     for(let i = 0; i < size; i++) {
-        leftDiagonal += board[i][i];
+        leftDiagonal += arrayLeftDiagonal(board,i);
     }
     if(leftDiagonal.indexOf("-") === -1 && leftDiagonal.indexOf(nextPlayer) === -1) {
         return true;
@@ -144,10 +141,11 @@ function isLeftDiagonalMatched()
 function isRightDiagonalMatched()
 {
     let rightDiagonal = "";
+    const arrayRightDiagonal = (matrix, rowIndex) => matrix[rowIndex][matrix.length - 1 - rowIndex];
     firstBoardELement = board[0][size-1];
     nextPlayer = findNextPlayer(firstBoardELement);
     for(let i = 0; i < size; i++) {
-            rightDiagonal += board[i][size-1-i];
+            rightDiagonal += arrayRightDiagonal(board,i);
     }
     if(rightDiagonal.indexOf("-") === -1 && rightDiagonal.indexOf(nextPlayer) === -1) {
         return true;
@@ -160,7 +158,6 @@ function gameIsWon()
 {
     let firstBoardELement;
     let nextPlayer;
-    let row;
     
     if(isRowMatched() === true || isColumnMatched() === true || isLeftDiagonalMatched() === true || 
         isRightDiagonalMatched() === true) {
