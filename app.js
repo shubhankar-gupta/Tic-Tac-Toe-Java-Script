@@ -127,7 +127,6 @@ function gameIsWon()
     if(isRowOrColumnMatched("row") || isRowOrColumnMatched("column") || isDiagonalMatched("left") || isDiagonalMatched("right")) {
         return true;
     }
-
     return false;
 }
 
