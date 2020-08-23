@@ -1,6 +1,6 @@
 const size = prompt("Size of Tic-Tac-Toe Board", 3);
 const board = new Array(size);
-let moves = size*size;
+let moves = size * size;
 
 function createBoard()
 {
@@ -41,7 +41,7 @@ function playGame()
 {
     let currentPlayer = "X";
     let flagInvalidPosition = 0;
-    while(gameIsWon() === false || moves !== 0) {
+    while(!gameIsWon() || moves) {
         let position = prompt("Enter the row and index of : " + currentPlayer);
 
         if(isInvalidPosition(position) === false) {
@@ -57,13 +57,13 @@ function playGame()
         console.log(`
          `);
 
-        if(gameIsWon() === true) {
+        if(gameIsWon()) {
             console.log("Game is Won by Player " + currentPlayer + " !");
             break;
         }
         currentPlayer = findNextPlayer(currentPlayer);
 
-        if(boardIsFull() && gameIsWon() === false) {
+        if(boardIsFull() && !gameIsWon()) {
             console.log("Game Drawn!");
             break;
         }
@@ -127,34 +127,19 @@ function isColumnMatched()
     return false;
 }
 
-function isLeftDiagonalMatched()
+function isDiagonalMatched(side)
 {
-    let leftDiagonal = "";
-    firstBoardELement = board[0][0];
+    let diagonal = "";
+    firstBoardElement = side === "left" ? board[0][0] : board[0][size - 1];
     nextPlayer = findNextPlayer(firstBoardELement);
     for(let i = 0; i < size; i++) {
-        leftDiagonal += board[i][i];
+        diagonal += side === "left" ? board[i][i] : board[i][size - 1 - i];
     }
-    if(leftDiagonal.indexOf("-") === -1 && leftDiagonal.indexOf(nextPlayer) === -1) {
+    if(diagonal.indexOf("-") === -1 && diagonal.indexOf(nextPlayer) === -1) {
         return true;
     }
     return false;
 }
-
-function isRightDiagonalMatched()
-{
-    let rightDiagonal = "";
-    firstBoardELement = board[0][size-1];
-    nextPlayer = findNextPlayer(firstBoardELement);
-    for(let i = 0; i < size; i++) {
-            rightDiagonal += board[i][size-1-i];
-    }
-    if(rightDiagonal.indexOf("-") === -1 && rightDiagonal.indexOf(nextPlayer) === -1) {
-        return true;
-    }
-    return false;
-}
-
 
 function gameIsWon()
 {
@@ -162,8 +147,7 @@ function gameIsWon()
     let nextPlayer;
     let row;
     
-    if(isRowMatched() === true || isColumnMatched() === true || isLeftDiagonalMatched() === true || 
-        isRightDiagonalMatched() === true) {
+    if(isRowMatched() || isColumnMatched() || isDiagonalMatched("left") || isDiagonalMatched("right")) {
         return true;
     }
 
