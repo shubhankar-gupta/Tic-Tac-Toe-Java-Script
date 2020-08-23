@@ -40,7 +40,6 @@ function isInvalidPosition(position)
 function playGame()
 {
     let currentPlayer = "X";
-    let flagInvalidPosition = 0;
     while(!gameIsWon() || moves) {
         let position = prompt("Enter the row and index of : " + currentPlayer);
 
@@ -91,34 +90,16 @@ function findNextPlayer(currentlyPlaying)
     return "X";
 }
 
-function isRowMatched()
+function isRowOrColumnMatched(side)
 {
     let row;
+    let firstBoardElement;
     for(let i = 0; i < size; i++) {
         row = "";
-        firstBoardELement = board[i][0];
-        nextPlayer = findNextPlayer(firstBoardELement);
-        
-        for(let j = 0;j < size; j++) {    
-            row += board[i][j];    
-        }
-        if(row.indexOf("-") === -1 && row.indexOf(nextPlayer) === -1) {
-            return true;
-        }
-    } 
-    return false;
-}
-
-function isColumnMatched()
-{
-    let row;
-    for(let j = 0; j < size; j++) {
-        firstBoardELement = board[0][j];
-        row = "";
-        nextPlayer = findNextPlayer(firstBoardELement);
-        
-        for(let i = 0; i < size; i++) {
-            row += board[i][j];
+        firstBoardElement = side === "row" ? board[i][0] : board[0][i];
+        nextPlayer = findNextPlayer(firstBoardElement);
+        for(let j = 0; j < size; j++) {
+            row += side === "row" ? board[i][j] : board [j][i];
         }
         if(row.indexOf("-") === -1 && row.indexOf(nextPlayer) === -1) {
             return true;
@@ -130,8 +111,8 @@ function isColumnMatched()
 function isDiagonalMatched(side)
 {
     let diagonal = "";
-    firstBoardElement = side === "left" ? board[0][0] : board[0][size - 1];
-    nextPlayer = findNextPlayer(firstBoardELement);
+    let firstBoardElement = side === "left" ? board[0][0] : board[0][size - 1];
+    nextPlayer = findNextPlayer(firstBoardElement);
     for(let i = 0; i < size; i++) {
         diagonal += side === "left" ? board[i][i] : board[i][size - 1 - i];
     }
@@ -143,11 +124,7 @@ function isDiagonalMatched(side)
 
 function gameIsWon()
 {
-    let firstBoardELement;
-    let nextPlayer;
-    let row;
-    
-    if(isRowMatched() || isColumnMatched() || isDiagonalMatched("left") || isDiagonalMatched("right")) {
+    if(isRowOrColumnMatched("row") || isRowOrColumnMatched("column") || isDiagonalMatched("left") || isDiagonalMatched("right")) {
         return true;
     }
 
