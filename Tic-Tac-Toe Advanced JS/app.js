@@ -1,6 +1,6 @@
 const size = prompt("Size of Tic-Tac-Toe Board", 3);
 const board = new Array(size);
-let moves = size*size;
+let moves = size * size;
 
 function createBoard()
 {
@@ -22,7 +22,7 @@ function showBoard()
     let row;
     for(let i = 0; i < size; i++) {
         row = "";
-        for(let j = 0; j < size;j++){
+        for(let j = 0; j < size; j++){
             row = row + board[i][j] + " ";
         }
         console.table(row);
@@ -41,11 +41,11 @@ function playGame()
 {
     let currentPlayer = "X";
     let flagInvalidPosition = 0;
-    while(gameIsWon() === false || moves !== 0) {
+    while(!gameIsWon() || moves) {
         let position = prompt("Enter the row and index of : " + currentPlayer);
 
         try {
-            if(isInvalidPosition(position) === false) {
+            if(!isInvalidPosition(position)) {
                 board[parseInt(position[0])][parseInt(position[1])] = currentPlayer;
                 moves--;
             } else {
@@ -62,13 +62,13 @@ function playGame()
         console.log(`
          `);
 
-        if(gameIsWon() === true) {
+        if(gameIsWon()) {
             console.log("Game is Won by Player " + currentPlayer + " !");
             break;
         }
         currentPlayer = findNextPlayer(currentPlayer);
 
-        if(boardIsFull() && gameIsWon() === false) {
+        if(boardIsFull() && !gameIsWon()) {
             console.log("Game Drawn!");
             break;
         }
@@ -99,8 +99,8 @@ function findNextPlayer(currentlyPlaying)
 function isRowMatched()
 {
     for(let boardRow of board) {
-        firstBoardELement = boardRow[0];
-        nextPlayer = findNextPlayer(firstBoardELement);
+        firstBoardElement = boardRow[0];
+        nextPlayer = findNextPlayer(firstBoardElement);
         if(boardRow.toString().indexOf("-") === -1 && boardRow.toString().indexOf(nextPlayer) === -1) {
             return true;
         }
@@ -113,8 +113,8 @@ function isColumnMatched()
     let column;
     const arrayColumn = (matrix, index) => matrix.map(x => x[index]);
     for(let i = 0; i < size; i++) {
-        firstBoardELement = board[0][i];
-        nextPlayer = findNextPlayer(firstBoardELement);
+        firstBoardElement = board[0][i];
+        nextPlayer = findNextPlayer(firstBoardElement);
         column = arrayColumn(board, i);
         if(column.toString().indexOf("-") === -1 && column.toString().indexOf(nextPlayer) === -1) {
             return true;
@@ -123,31 +123,18 @@ function isColumnMatched()
     return false;
 }
 
-function isLeftDiagonalMatched()
+function isDiagonalMatched(side)
 {
-    let leftDiagonal = "";
+    let firstBoardElement;
+    let diagonal = "";
     const arrayLeftDiagonal = (matrix, rowIndex) => matrix[rowIndex][rowIndex];
-    firstBoardELement = board[0][0];
-    nextPlayer = findNextPlayer(firstBoardELement);
-    for(let i = 0; i < size; i++) {
-        leftDiagonal += arrayLeftDiagonal(board, i);
-    }
-    if(leftDiagonal.indexOf("-") === -1 && leftDiagonal.indexOf(nextPlayer) === -1) {
-        return true;
-    }
-    return false;
-}
-
-function isRightDiagonalMatched()
-{
-    let rightDiagonal = "";
     const arrayRightDiagonal = (matrix, rowIndex) => matrix[rowIndex][matrix.length - 1 - rowIndex];
-    firstBoardELement = board[0][size-1];
-    nextPlayer = findNextPlayer(firstBoardELement);
+    firstBoardElement = side === "left" ? board[0][0] : board[0][size-1];
+    nextPlayer = findNextPlayer(firstBoardElement);
     for(let i = 0; i < size; i++) {
-            rightDiagonal += arrayRightDiagonal(board, i);
+        diagonal += side === "left" ? arrayLeftDiagonal(board, i) : arrayRightDiagonal(board, i);
     }
-    if(rightDiagonal.indexOf("-") === -1 && rightDiagonal.indexOf(nextPlayer) === -1) {
+    if(diagonal.indexOf("-") === -1 && diagonal.indexOf(nextPlayer) === -1) {
         return true;
     }
     return false;
@@ -156,11 +143,8 @@ function isRightDiagonalMatched()
 
 function gameIsWon()
 {
-    let firstBoardELement;
-    let nextPlayer;
-    
-    if(isRowMatched() === true || isColumnMatched() === true || isLeftDiagonalMatched() === true || 
-        isRightDiagonalMatched() === true) {
+    let firstBoardElement;   
+    if(isRowMatched() || isColumnMatched() || isDiagonalMatched("left") || isDiagonalMatched("right")) {
         return true;
     }
     return false;
