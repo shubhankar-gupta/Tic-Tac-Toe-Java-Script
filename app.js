@@ -43,7 +43,7 @@ function playGame()
     while(!gameIsWon() || moves) {
         let position = prompt("Enter the row and index of : " + currentPlayer);
 
-        if(isInvalidPosition(position) === false) {
+        if(!isInvalidPosition(position)) {
             board[parseInt(position[0])][parseInt(position[1])] = currentPlayer;
             moves--;
         } else {
