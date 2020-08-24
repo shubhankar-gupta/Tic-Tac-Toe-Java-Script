@@ -84,10 +84,7 @@ function boardIsFull()
 
 function findNextPlayer(currentlyPlaying)
 {
-    if(currentlyPlaying === "X"){ 
-        return "O";
-    } 
-    return "X";
+    return currentlyPlaying === "X" ? "O" : "X";
 }
 
 function isRowOrColumnMatched(side)
