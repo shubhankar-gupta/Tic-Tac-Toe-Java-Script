@@ -96,27 +96,15 @@ function findNextPlayer(currentlyPlaying)
     return "X";
 }
 
-function isRowMatched()
+function isRowOrColumnMatched(side)
 {
-    for(let boardRow of board) {
-        firstBoardElement = boardRow[0];
-        nextPlayer = findNextPlayer(firstBoardElement);
-        if(boardRow.toString().indexOf("-") === -1 && boardRow.toString().indexOf(nextPlayer) === -1) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function isColumnMatched()
-{
-    let column;
+    let row;
     const arrayColumn = (matrix, index) => matrix.map(x => x[index]);
     for(let i = 0; i < size; i++) {
-        firstBoardElement = board[0][i];
+        firstBoardElement = side === "column" ? board[0][i] : board[i][0];
         nextPlayer = findNextPlayer(firstBoardElement);
-        column = arrayColumn(board, i);
-        if(column.toString().indexOf("-") === -1 && column.toString().indexOf(nextPlayer) === -1) {
+        row = side === "column" ? arrayColumn(board, i) : board[i];
+        if(row.toString().indexOf("-") === -1 && row.toString().indexOf(nextPlayer) === -1) {
             return true;
         }
     }
@@ -144,7 +132,7 @@ function isDiagonalMatched(side)
 function gameIsWon()
 {
     let firstBoardElement;   
-    if(isRowMatched() || isColumnMatched() || isDiagonalMatched("left") || isDiagonalMatched("right")) {
+    if(isRowOrColumnMatched("row") || isRowOrColumnMatched("column") || isDiagonalMatched("left") || isDiagonalMatched("right")) {
         return true;
     }
     return false;
